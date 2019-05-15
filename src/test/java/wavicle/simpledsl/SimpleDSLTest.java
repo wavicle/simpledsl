@@ -45,10 +45,10 @@ public class SimpleDSLTest {
 		assertEquals("capital", result2.getPlaceValue("propertyName"));
 		assertEquals("Ottawa", result2.getPlaceValue("propertyValue"));
 
-		/** And this should match rule 1 **/
-		ComprehensionResult result1 = grammar.comprehend("My name is Shashank");
+		/** And this should match rule 1 (note that it is also case-insensitive! **/
+		ComprehensionResult result1 = grammar.comprehend("mY NaME iS Shashank");
 		assertEquals(rule1.getName(), result1.getRuleName());
-		assertEquals("name", result1.getPlaceValue("propertyName"));
+		assertEquals("NaME", result1.getPlaceValue("propertyName"));
 		assertEquals("Shashank", result1.getPlaceValue("propertyValue"));
 	}
 
