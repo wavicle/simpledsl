@@ -8,7 +8,7 @@ import org.apache.commons.lang3.Validate;
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
 
-public class GrammarRule {
+public class Intent {
 	private String name;
 
 	private String regex;
@@ -32,12 +32,12 @@ public class GrammarRule {
 		this.regex = regex;
 	}
 
-	public RuleMatchResult match(String inputSentence) {
+	public IntentMatchResult match(String inputSentence) {
 		Validate.notNull(inputSentence);
 		Matcher matcher = pattern.matcher(inputSentence.replaceAll(" +", " "));
-		RuleMatchResult result = null;
+		IntentMatchResult result = null;
 		if (matcher.find()) {
-			result = new RuleMatchResult();
+			result = new IntentMatchResult();
 			List<Map<String, String>> namedGroups = matcher.namedGroups();
 			for (Map<String, String> namedGroup : namedGroups) {
 				for (String groupName : namedGroup.keySet()) {

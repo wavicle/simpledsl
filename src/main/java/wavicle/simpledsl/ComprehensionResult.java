@@ -4,16 +4,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ComprehensionResult {
-	private String ruleName;
+	private String intentName;
 
 	private Map<String, String> placeValuesByName = new HashMap<>();
 
-	public String getRuleName() {
-		return ruleName;
+	public String getIntentName() {
+		return intentName;
 	}
 
-	public void setRuleName(String ruleName) {
-		this.ruleName = ruleName;
+	public void setIntentName(String intentName) {
+		this.intentName = intentName;
 	}
 
 	public void setPlaceValue(String name, String value) {

@@ -5,22 +5,22 @@ import java.util.List;
 
 public class Grammar {
 
-	private List<GrammarRule> rules = new ArrayList<>();
+	private List<Intent> intents = new ArrayList<>();
 
-	public void addRule(GrammarRule rule) {
-		rules.add(rule);
+	public void addIntent(Intent intent) {
+		intents.add(intent);
 	}
 
-	public List<GrammarRule> getRules() {
-		return rules;
+	public List<Intent> getIntents() {
+		return intents;
 	}
 
 	public ComprehensionResult comprehend(String inputSentence) {
-		for (GrammarRule rule : rules) {
-			RuleMatchResult matchResult = rule.match(inputSentence);
+		for (Intent intent : intents) {
+			IntentMatchResult matchResult = intent.match(inputSentence);
 			if (matchResult != null) {
 				ComprehensionResult result = new ComprehensionResult();
-				result.setRuleName(rule.getName());
+				result.setIntentName(intent.getName());
 				result.setPlaceValuesByName(matchResult.getPlaceValuesByName());
 				return result;
 			}
