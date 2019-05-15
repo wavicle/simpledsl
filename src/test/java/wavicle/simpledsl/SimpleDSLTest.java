@@ -39,8 +39,8 @@ public class SimpleDSLTest {
 		/** Let's test the grammar! This first sentence won't match anything **/
 		assertNull(grammar.comprehend("Use the key with the door"));
 
-		/** This should match rule 2 **/
-		ComprehensionResult result2 = grammar.comprehend("The capital of Canada is Ottawa");
+		/** This should match rule 2 (note that extra spaces are ignored) **/
+		ComprehensionResult result2 = grammar.comprehend("  The capital    of Canada  is Ottawa ");
 		assertEquals(rule2.getName(), result2.getRuleName());
 		assertEquals("capital", result2.getPlaceValue("propertyName"));
 		assertEquals("Ottawa", result2.getPlaceValue("propertyValue"));

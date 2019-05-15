@@ -3,6 +3,8 @@ package wavicle.simpledsl;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.Validate;
+
 import com.google.code.regexp.Matcher;
 import com.google.code.regexp.Pattern;
 
@@ -31,7 +33,8 @@ public class GrammarRule {
 	}
 
 	public RuleMatchResult match(String inputSentence) {
-		Matcher matcher = pattern.matcher(inputSentence);
+		Validate.notNull(inputSentence);
+		Matcher matcher = pattern.matcher(inputSentence.replaceAll(" +", " "));
 		RuleMatchResult result = null;
 		if (matcher.find()) {
 			result = new RuleMatchResult();
