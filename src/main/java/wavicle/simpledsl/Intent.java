@@ -1,5 +1,6 @@
 package wavicle.simpledsl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,9 +12,7 @@ import com.google.code.regexp.Pattern;
 public class Intent {
 	private String name;
 
-	private String regex;
-
-	private Pattern pattern;
+	private List<Pattern> utterancePatterns = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -23,18 +22,24 @@ public class Intent {
 		this.name = name;
 	}
 
-	public String getRegex() {
-		return regex;
+	public void addSampleUtterance(String utterance) {
+		Pattern pattern = Pattern.compile(utterance, Pattern.CASE_INSENSITIVE);
+		utterancePatterns.add(pattern);
 	}
 
-	public void setRegex(String regex) {
-		this.pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-		this.regex = regex;
+	public IntentMatchResult match(String inputUtterance) {
+		Validate.notNull(inputUtterance);
+		for (Pattern utterancePattern : utterancePatterns) {
+			IntentMatchResult result = match(inputUtterance, utterancePattern);
+			if (result != null) {
+				return result;
+			}
+		}
+		return null;
 	}
 
-	public IntentMatchResult match(String inputSentence) {
-		Validate.notNull(inputSentence);
-		Matcher matcher = pattern.matcher(inputSentence.replaceAll(" +", " "));
+	private IntentMatchResult match(String inputUtterance, Pattern pattern) {
+		Matcher matcher = pattern.matcher(inputUtterance.replaceAll(" +", " "));
 		IntentMatchResult result = null;
 		if (matcher.find()) {
 			result = new IntentMatchResult();
