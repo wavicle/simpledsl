@@ -1,6 +1,7 @@
 package wavicle.simpledsl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ public class Intent {
 	private String name;
 
 	private List<Pattern> utterancePatterns = new ArrayList<>();
+
+	private Map<String, SlotResolver> slotResolversByName = new HashMap<>();
 
 	public String getName() {
 		return name;
@@ -52,6 +55,14 @@ public class Intent {
 			}
 		}
 		return result;
+	}
+
+	public void addSlotResolver(String slotName, SlotResolver slotResolver) {
+		slotResolversByName.put(slotName, slotResolver);
+	}
+
+	public SlotResolver getSlotResolverByName(String slotName) {
+		return slotResolversByName.get(slotName);
 	}
 
 }

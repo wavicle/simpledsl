@@ -12,15 +12,15 @@ import org.junit.Test;
  * @author Shashank Araokar
  *
  */
-public class SimpleDSLTest {
+public class SimpleDSLTestSuite {
 
 	/**
 	 * Verifies that when a grammar is created with a list of intents, it correctly
-	 * identifies the intent when given an input and also returns matching place
-	 * values.
+	 * identifies the intent when given an input and also returns matching literal
+	 * place values.
 	 */
 	@Test
-	public void basic() {
+	public void basic_literal_match() {
 		/** Define an intent with a certain syntax governed by the regex **/
 		Intent intent1 = new Intent();
 		intent1.setName("my_pname_is_pval");
@@ -44,20 +44,20 @@ public class SimpleDSLTest {
 		/** This should match intent 2 (note that extra spaces are ignored) **/
 		result = grammar.comprehend("  The capital    of Canada  is Ottawa ");
 		assertEquals(intent2.getName(), result.getIntentName());
-		assertEquals("capital", result.getPlaceValue("propertyName"));
-		assertEquals("Ottawa", result.getPlaceValue("propertyValue"));
+		assertEquals("capital", result.getSlotValue("propertyName").getLiteral());
+		assertEquals("Ottawa", result.getSlotValue("propertyValue").getLiteral());
 
 		/** And this should match intent 1 (note that it is also case-insensitive!) **/
 		result = grammar.comprehend("mY NaME iS Shashank");
 		assertEquals(intent1.getName(), result.getIntentName());
-		assertEquals("NaME", result.getPlaceValue("propertyName"));
-		assertEquals("Shashank", result.getPlaceValue("propertyValue"));
+		assertEquals("NaME", result.getSlotValue("propertyName").getLiteral());
+		assertEquals("Shashank", result.getSlotValue("propertyValue").getLiteral());
 
 		/** There is more. This is intent 1 with a different style **/
 		result = grammar.comprehend("Java is my language");
 		assertEquals(intent1.getName(), result.getIntentName());
-		assertEquals("language", result.getPlaceValue("propertyName"));
-		assertEquals("Java", result.getPlaceValue("propertyValue"));
+		assertEquals("language", result.getSlotValue("propertyName").getLiteral());
+		assertEquals("Java", result.getSlotValue("propertyValue").getLiteral());
 	}
 
 }

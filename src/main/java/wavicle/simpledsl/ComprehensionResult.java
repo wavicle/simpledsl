@@ -6,7 +6,7 @@ import java.util.Map;
 public class ComprehensionResult {
 	private String intentName;
 
-	private Map<String, String> placeValuesByName = new HashMap<>();
+	private Map<String, SlotValue> slotValuesByName = new HashMap<>();
 
 	public String getIntentName() {
 		return intentName;
@@ -16,19 +16,19 @@ public class ComprehensionResult {
 		this.intentName = intentName;
 	}
 
-	public void setPlaceValue(String name, String value) {
-		placeValuesByName.put(name, value);
+	public void setSlotValue(String name, SlotValue value) {
+		slotValuesByName.put(name, value);
 	}
 
-	public String getPlaceValue(String name) {
-		return placeValuesByName.get(name);
+	public SlotValue getSlotValue(String name) {
+		return slotValuesByName.get(name);
 	}
 
-	public Map<String, String> getPlaceValuesByName() {
-		return placeValuesByName;
+	public Map<String, SlotValue> getSlotValuesByName() {
+		return slotValuesByName;
 	}
 
-	public void setPlaceValuesByName(Map<String, String> placeValuesByName) {
-		this.placeValuesByName = placeValuesByName;
+	public void setSlotValuesByName(Map<String, SlotValue> slotValuesByName) {
+		this.slotValuesByName = slotValuesByName;
 	}
 }
