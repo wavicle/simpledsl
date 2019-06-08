@@ -3,6 +3,9 @@ package wavicle.simpledsl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.Test;
 
 /**
@@ -70,6 +73,7 @@ public class SimpleDSLTestSuite {
 	public void simple_slot_resolver() {
 		/** Create a simple intent **/
 		Intent intent = new Intent();
+		intent.setName("myintent");
 		intent.addSampleUtterance("I have lived in (?<cityName>\\w+) since (?<year>\\w+)");
 		/** Add a slot resolver that makes the city name uppercase **/
 		intent.addSlotResolver("cityName", new SlotResolver() {
@@ -102,6 +106,70 @@ public class SimpleDSLTestSuite {
 		SlotValue yearSlotValue = result.getSlotValue("year");
 		assertEquals("2014", yearSlotValue.getLiteral());
 		assertEquals("2014", yearSlotValue.getResolved());
+	}
+
+	/**
+	 * Verifies that once a comprehension result is available, it can be fed to the
+	 * grammar to execute an 'action' associated with the matching intent.
+	 * 
+	 * In this test, we create a simple DSL that can set and get the value of a
+	 * variable. The syntax is as follows:
+	 * 
+	 * - set name to 'Shashank Araokar'
+	 * 
+	 * - get name
+	 * 
+	 * The first command sets the name and the next one gets the name back.
+	 * 
+	 */
+	@Test
+	public void execution_action_upon_comprehension() {
+		/** This intent 'sets' the value of a variable **/
+		Intent setIntent = new Intent();
+		setIntent.setName("set_varname_to_varvalue");
+		setIntent.addSampleUtterance("set (?<varname>\\w+) to '(?<varvalue>.+)'");
+		setIntent.setAction(new IntendedAction() {
+
+			@Override
+			public Object execute(ComprehensionResult result, Map<String, Object> context) {
+				String varName = result.getSlotValue("varname").getResolved();
+				String varValue = result.getSlotValue("varvalue").getResolved();
+				context.put(varName, varValue);
+				return null;
+			}
+		});
+
+		/** This intent 'gets' the value of a variable **/
+		Intent getIntent = new Intent();
+		getIntent.setName("get_varvalue_for_varname");
+		getIntent.addSampleUtterance("get (?<varname>\\w+)");
+		getIntent.setAction(new IntendedAction() {
+
+			@Override
+			public Object execute(ComprehensionResult result, Map<String, Object> context) {
+				String varName = result.getSlotValue("varname").getResolved();
+				String varValue = (String) context.get(varName);
+				return varValue;
+			}
+		});
+
+		Grammar grammar = new Grammar();
+		grammar.addIntent(setIntent);
+		grammar.addIntent(getIntent);
+
+		/** We use the DSL to set and then get the name in a given 'context' **/
+		Map<String, Object> context = new HashMap<>();
+		grammar.comprehendAndExecute("set name to 'Shashank Araokar'", context);
+		Object returnedName = grammar.comprehendAndExecute("get name", context);
+
+		/** The returned value must match the name **/
+		assertEquals("Shashank Araokar", returnedName);
+
+		/**
+		 * In fact, the context will have this value too (that is what the context is
+		 * used for)
+		 **/
+		assertEquals("Shashank Araokar", context.get("name"));
 	}
 
 }

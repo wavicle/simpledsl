@@ -17,6 +17,8 @@ public class Intent {
 
 	private Map<String, SlotResolver> slotResolversByName = new HashMap<>();
 
+	private IntendedAction action;
+
 	public String getName() {
 		return name;
 	}
@@ -63,6 +65,14 @@ public class Intent {
 
 	public SlotResolver getSlotResolverByName(String slotName) {
 		return slotResolversByName.get(slotName);
+	}
+
+	public IntendedAction getAction() {
+		return action;
+	}
+
+	public void setAction(IntendedAction action) {
+		this.action = action;
 	}
 
 }

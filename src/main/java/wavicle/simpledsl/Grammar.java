@@ -1,24 +1,33 @@
 package wavicle.simpledsl;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 
 public class Grammar {
 
-	private List<Intent> intents = new ArrayList<>();
+	private Map<String, Intent> intentsByName = new HashMap<>();
 
 	public void addIntent(Intent intent) {
-		intents.add(intent);
+		Validate.notNull(intent, "The intent must not be null.");
+		Validate.notBlank(intent.getName(), "The intent name must not be blank.");
+		Validate.isTrue(!StringUtils.containsWhitespace(intent.getName()),
+				"The intent name must not have whitespaces.");
+		if (intentsByName.containsKey(intent.getName())) {
+			throw new IllegalArgumentException("An intent with name: " + intent.getName() + " has already been added.");
+		}
+		intentsByName.put(intent.getName(), intent);
 	}
 
-	public List<Intent> getIntents() {
-		return intents;
+	public Collection<Intent> getIntents() {
+		return intentsByName.values();
 	}
 
 	public ComprehensionResult comprehend(String inputSentence) {
-		for (Intent intent : intents) {
+		for (Intent intent : intentsByName.values()) {
 			IntentMatchResult matchResult = intent.match(inputSentence);
 			if (matchResult != null) {
 				ComprehensionResult result = new ComprehensionResult();
@@ -43,5 +52,18 @@ public class Grammar {
 			slotValuesByName.put(slotName, slotValue);
 		}
 		return slotValuesByName;
+	}
+
+	public Object comprehendAndExecute(String inputSentence, Map<String, Object> context) {
+		ComprehensionResult comprehensionResult = comprehend(inputSentence);
+		Object returnable = null;
+		if (comprehensionResult != null) {
+			Intent intent = intentsByName.get(comprehensionResult.getIntentName());
+			IntendedAction action = intent.getAction();
+			if (action != null) {
+				returnable = action.execute(comprehensionResult, context);
+			}
+		}
+		return returnable;
 	}
 }
