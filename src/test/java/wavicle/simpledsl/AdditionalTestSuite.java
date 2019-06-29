@@ -19,13 +19,13 @@ public class AdditionalTestSuite {
 	/**
 	 * Verifies that:
 	 * 
-	 * 1. Intent names must not be null
+	 * 1. MutableIntent names must not be null
 	 * 
-	 * 2. Intent names must not have whitespaces
+	 * 2. MutableIntent names must not have whitespaces
 	 */
 	@Test
 	public void intent_must_have_valid_name() {
-		Intent intent = new Intent();
+		MutableIntent intent = new MutableIntent();
 		Grammar grammar = new Grammar();
 
 		intent.setName(null);
@@ -51,9 +51,9 @@ public class AdditionalTestSuite {
 	 */
 	@Test
 	public void intent_name_must_be_unique() {
-		Intent intent1 = new Intent();
+		MutableIntent intent1 = new MutableIntent();
 		intent1.setName("myintent");
-		Intent intent2 = new Intent();
+		MutableIntent intent2 = new MutableIntent();
 		intent2.setName("myintent");
 
 		Grammar grammar = new Grammar();

@@ -25,15 +25,15 @@ public class SimpleDSLTestSuite {
 	@Test
 	public void basic_literal_match() {
 		/** Define an intent with a certain syntax governed by the regex **/
-		Intent intent1 = new Intent();
+		MutableIntent intent1 = new MutableIntent();
 		intent1.setName("my_pname_is_pval");
-		intent1.addSampleUtterance("My (?<propertyName>\\w+) is (?<propertyValue>\\w+)");
-		intent1.addSampleUtterance("(?<propertyValue>\\w+) is my (?<propertyName>\\w+)");
+		intent1.addSampleUtterances("My (?<propertyName>\\w+) is (?<propertyValue>\\w+)",
+				"(?<propertyValue>\\w+) is my (?<propertyName>\\w+)");
 
 		/** Another intent is defined with slightly different syntax **/
-		Intent intent2 = new Intent();
+		MutableIntent intent2 = new MutableIntent();
 		intent2.setName("the_pname_of_owner_is_pval");
-		intent2.addSampleUtterance("The (?<propertyName>\\w+) of (?<ownerName>\\w+) is (?<propertyValue>\\w+)");
+		intent2.addSampleUtterances("The (?<propertyName>\\w+) of (?<ownerName>\\w+) is (?<propertyValue>\\w+)");
 
 		/** Create a grammar and add these two intents to it **/
 		Grammar grammar = new Grammar();
@@ -72,9 +72,9 @@ public class SimpleDSLTestSuite {
 	@Test
 	public void simple_slot_resolver() {
 		/** Create a simple intent **/
-		Intent intent = new Intent();
+		MutableIntent intent = new MutableIntent();
 		intent.setName("myintent");
-		intent.addSampleUtterance("I have lived in (?<cityName>\\w+) since (?<year>\\w+)");
+		intent.addSampleUtterances("I have lived in (?<cityName>\\w+) since (?<year>\\w+)");
 		/** Add a slot resolver that makes the city name uppercase **/
 		intent.addSlotResolver("cityName", new SlotResolver() {
 
@@ -125,9 +125,9 @@ public class SimpleDSLTestSuite {
 	@Test
 	public void execution_action_upon_comprehension() {
 		/** This intent 'sets' the value of a variable **/
-		Intent setIntent = new Intent();
+		MutableIntent setIntent = new MutableIntent();
 		setIntent.setName("set_varname_to_varvalue");
-		setIntent.addSampleUtterance("set (?<varname>\\w+) to '(?<varvalue>.+)'");
+		setIntent.addSampleUtterances("set (?<varname>\\w+) to '(?<varvalue>.+)'");
 		setIntent.setAction(new IntendedAction() {
 
 			@Override
@@ -140,9 +140,9 @@ public class SimpleDSLTestSuite {
 		});
 
 		/** This intent 'gets' the value of a variable **/
-		Intent getIntent = new Intent();
+		MutableIntent getIntent = new MutableIntent();
 		getIntent.setName("get_varvalue_for_varname");
-		getIntent.addSampleUtterance("get (?<varname>\\w+)");
+		getIntent.addSampleUtterances("get (?<varname>\\w+)");
 		getIntent.setAction(new IntendedAction() {
 
 			@Override
