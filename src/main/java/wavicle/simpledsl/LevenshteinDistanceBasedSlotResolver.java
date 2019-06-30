@@ -43,7 +43,7 @@ public class LevenshteinDistanceBasedSlotResolver implements SlotResolver {
 			String exactValue = entry.getKey();
 			Set<String> samples = entry.getValue();
 			for (String sample : samples) {
-				int distance = levenshteinDistance.apply(exactValue, sample);
+				int distance = levenshteinDistance.apply(literal, sample);
 				int threshold = (int) (sample.length() * maxDistanceFraction);
 				if (distance <= threshold) {
 					return exactValue;

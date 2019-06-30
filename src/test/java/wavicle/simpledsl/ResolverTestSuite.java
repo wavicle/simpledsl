@@ -1,6 +1,7 @@
 package wavicle.simpledsl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -71,7 +72,9 @@ public class ResolverTestSuite {
 		intent.addSampleUtterances("I live in (?<placeName>\\w+)");
 
 		LevenshteinDistanceBasedSlotResolver slotResolver = new LevenshteinDistanceBasedSlotResolver();
+		slotResolver.setMaxDistanceFraction(0.2);
 		slotResolver.addSamples("Massachusetts", new HashSet<>(Arrays.asList("Mass", "MA")));
+		slotResolver.addSamples("California", new HashSet<>(Arrays.asList("Cali", "CA")));
 		intent.addSlotResolver("placeName", slotResolver);
 
 		Grammar grammar = new Grammar();
@@ -83,10 +86,19 @@ public class ResolverTestSuite {
 
 		/** Minor mis-spellings are okay **/
 		assertEquals("Massachusetts",
-				grammar.comprehend("I live in Masachusts").getSlotValue("placeName").getResolved());
+				grammar.comprehend("I live in Maschusetts").getSlotValue("placeName").getResolved());
 
 		/** Another synonym works too **/
 		assertEquals("Massachusetts", grammar.comprehend("I live in MA").getSlotValue("placeName").getResolved());
+
+		/** Another synonym works too **/
+		assertEquals("California", grammar.comprehend("I live in Calfornia").getSlotValue("placeName").getResolved());
+
+		/**
+		 * This one can't be resolved because it exceeds the maxDistanceFraction set
+		 * above (0.2)
+		 **/
+		assertNull(grammar.comprehend("I live in Calif").getSlotValue("placeName").getResolved());
 
 	}
 
