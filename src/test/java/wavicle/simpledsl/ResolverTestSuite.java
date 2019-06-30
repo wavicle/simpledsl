@@ -4,7 +4,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -73,8 +76,10 @@ public class ResolverTestSuite {
 
 		LevenshteinDistanceBasedSlotResolver slotResolver = new LevenshteinDistanceBasedSlotResolver();
 		slotResolver.setMaxDistanceFraction(0.2);
-		slotResolver.addSamples("Massachusetts", new HashSet<>(Arrays.asList("Mass", "MA")));
-		slotResolver.addSamples("California", new HashSet<>(Arrays.asList("Cali", "CA")));
+		Map<String, Set<String>> samplesMap = new HashMap<>();
+		samplesMap.put("Massachusetts", new HashSet<>(Arrays.asList("Mass", "MA")));
+		samplesMap.put("California", new HashSet<>(Arrays.asList("Cali", "CA")));
+		slotResolver.setSampleSupplier(() -> samplesMap);
 		intent.addSlotResolver("placeName", slotResolver);
 
 		Grammar grammar = new Grammar();
