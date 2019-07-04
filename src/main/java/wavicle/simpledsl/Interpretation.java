@@ -3,7 +3,7 @@ package wavicle.simpledsl;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComprehensionResult {
+public class Interpretation {
 	private String intentName;
 
 	private Map<String, SlotValue> slotValuesByName = new HashMap<>();
@@ -16,16 +16,8 @@ public class ComprehensionResult {
 		this.intentName = intentName;
 	}
 
-	public void setSlotValue(String name, SlotValue value) {
-		slotValuesByName.put(name, value);
-	}
-
 	public SlotValue getSlotValue(String name) {
 		return slotValuesByName.get(name);
-	}
-
-	public Map<String, SlotValue> getSlotValuesByName() {
-		return slotValuesByName;
 	}
 
 	public void setSlotValuesByName(Map<String, SlotValue> slotValuesByName) {

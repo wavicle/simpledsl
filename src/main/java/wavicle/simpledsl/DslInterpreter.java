@@ -7,9 +7,11 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 
-public class Grammar {
+public class DslInterpreter {
 
 	private Map<String, Intent> intentsByName = new HashMap<>();
+
+	private Map<String, Map<String, SlotResolver>> slotResolversByIntentAndSlotName = new HashMap<>();
 
 	public void addIntent(Intent intent) {
 		Validate.notNull(intent, "The intent must not be null.");
@@ -26,11 +28,20 @@ public class Grammar {
 		return intentsByName.values();
 	}
 
-	public ComprehensionResult comprehend(String inputSentence) {
+	public void addSlotResolverForIntentAndSlot(String intentName, String slotName, SlotResolver slotResolver) {
+		slotResolversByIntentAndSlotName.computeIfAbsent(intentName, key -> new HashMap<>()).put(slotName,
+				slotResolver);
+	}
+
+	public SlotResolver getSlotResolverForIntentAndSlot(String intentName, String slotName) {
+		return slotResolversByIntentAndSlotName.computeIfAbsent(intentName, key -> new HashMap<>()).get(slotName);
+	}
+
+	public Interpretation interpret(String inputSentence) {
 		for (Intent intent : intentsByName.values()) {
 			IntentMatchResult matchResult = intent.match(inputSentence);
 			if (matchResult != null) {
-				ComprehensionResult result = new ComprehensionResult();
+				Interpretation result = new Interpretation();
 				result.setIntentName(intent.getName());
 				Map<String, String> placeValuesByName = matchResult.getPlaceValuesByName();
 				Map<String, SlotValue> slotValuesByName = buildSlotValuesByName(intent, placeValuesByName);
@@ -46,7 +57,7 @@ public class Grammar {
 		for (Map.Entry<String, String> entry : placeValuesByName.entrySet()) {
 			String slotName = entry.getKey();
 			String literalSlotValue = entry.getValue();
-			SlotResolver slotResolver = intent.getSlotResolverByName(slotName);
+			SlotResolver slotResolver = getSlotResolverForIntentAndSlot(intent.getName(), slotName);
 			String resolvedSlotValue = slotResolver == null ? literalSlotValue : slotResolver.resolve(literalSlotValue);
 			SlotValue slotValue = new SlotValue(literalSlotValue, resolvedSlotValue);
 			slotValuesByName.put(slotName, slotValue);
@@ -54,16 +65,4 @@ public class Grammar {
 		return slotValuesByName;
 	}
 
-	public Object comprehendAndExecute(String inputSentence, Map<String, Object> context) {
-		ComprehensionResult comprehensionResult = comprehend(inputSentence);
-		Object returnable = null;
-		if (comprehensionResult != null) {
-			Intent intent = intentsByName.get(comprehensionResult.getIntentName());
-			IntendedAction action = intent.getAction();
-			if (action != null) {
-				returnable = action.execute(comprehensionResult, context);
-			}
-		}
-		return returnable;
-	}
 }

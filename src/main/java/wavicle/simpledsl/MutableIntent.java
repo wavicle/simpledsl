@@ -1,7 +1,6 @@
 package wavicle.simpledsl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +13,6 @@ public class MutableIntent implements Intent {
 	private String name;
 
 	private List<Pattern> utterancePatterns = new ArrayList<>();
-
-	private Map<String, SlotResolver> slotResolversByName = new HashMap<>();
-
-	private IntendedAction action;
 
 	/*
 	 * (non-Javadoc)
@@ -71,34 +66,6 @@ public class MutableIntent implements Intent {
 			}
 		}
 		return result;
-	}
-
-	public void addSlotResolver(String slotName, SlotResolver slotResolver) {
-		slotResolversByName.put(slotName, slotResolver);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see wavicle.simpledsl.Intent#getSlotResolverByName(java.lang.String)
-	 */
-	@Override
-	public SlotResolver getSlotResolverByName(String slotName) {
-		return slotResolversByName.get(slotName);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see wavicle.simpledsl.Intent#getAction()
-	 */
-	@Override
-	public IntendedAction getAction() {
-		return action;
-	}
-
-	public void setAction(IntendedAction action) {
-		this.action = action;
 	}
 
 }

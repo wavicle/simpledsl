@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 import org.junit.Test;
 
 /**
- * Additional tests for SimpleDSL. See SimpleDSLTestSuite if you are interested
+ * Additional tests for SimpleDSL. See DslInterpreterTestSuite if you are interested
  * in testing the overall functionality.
  * 
  * @author Shashank Araokar
@@ -26,11 +26,11 @@ public class AdditionalTestSuite {
 	@Test
 	public void intent_must_have_valid_name() {
 		MutableIntent intent = new MutableIntent();
-		Grammar grammar = new Grammar();
+		DslInterpreter dslInterpreter = new DslInterpreter();
 
 		intent.setName(null);
 		assertThrows(() -> {
-			grammar.addIntent(intent);
+			dslInterpreter.addIntent(intent);
 		}, e -> {
 			assertEquals("The intent name must not be blank.", e.getMessage());
 		});
@@ -38,7 +38,7 @@ public class AdditionalTestSuite {
 
 		intent.setName(" my intent 		\n");
 		assertThrows(() -> {
-			grammar.addIntent(intent);
+			dslInterpreter.addIntent(intent);
 		}, e -> {
 			assertEquals("The intent name must not have whitespaces.", e.getMessage());
 		});
@@ -46,8 +46,8 @@ public class AdditionalTestSuite {
 	}
 
 	/**
-	 * Verifies that if two intents with the same name are added to a grammar, an
-	 * exception is thrown.
+	 * Verifies that if two intents with the same name are added to an interpreter,
+	 * an exception is thrown.
 	 */
 	@Test
 	public void intent_name_must_be_unique() {
@@ -56,11 +56,11 @@ public class AdditionalTestSuite {
 		MutableIntent intent2 = new MutableIntent();
 		intent2.setName("myintent");
 
-		Grammar grammar = new Grammar();
-		grammar.addIntent(intent1);
+		DslInterpreter dslInterpreter = new DslInterpreter();
+		dslInterpreter.addIntent(intent1);
 
 		assertThrows(() -> {
-			grammar.addIntent(intent2);
+			dslInterpreter.addIntent(intent2);
 		}, e -> {
 			assertEquals("An intent with name: myintent has already been added.", e.getMessage());
 		});

@@ -31,8 +31,12 @@ public class ResolverTestSuite {
 		MutableIntent intent = new MutableIntent();
 		intent.setName("myintent");
 		intent.addSampleUtterances("I have lived in (?<cityName>\\w+) since (?<year>\\w+)");
+
+		/** Create an interpreter just with one intent **/
+		DslInterpreter dslInterpreter = new DslInterpreter();
+		dslInterpreter.addIntent(intent);
 		/** Add a slot resolver that makes the city name uppercase **/
-		intent.addSlotResolver("cityName", new SlotResolver() {
+		dslInterpreter.addSlotResolverForIntentAndSlot(intent.getName(), "cityName", new SlotResolver() {
 
 			@Override
 			public String resolve(String literal) {
@@ -40,12 +44,8 @@ public class ResolverTestSuite {
 			}
 		});
 
-		/** Create a grammar just with one intent **/
-		Grammar grammar = new Grammar();
-		grammar.addIntent(intent);
-
 		/** We pass an input where the city name is all lowercase **/
-		ComprehensionResult result = grammar.comprehend("I have lived in boston since 2014");
+		Interpretation result = dslInterpreter.interpret("I have lived in boston since 2014");
 
 		/**
 		 * Verify that the literal match is still lower case, but the resolved value is
@@ -80,30 +80,31 @@ public class ResolverTestSuite {
 		samplesMap.put("Massachusetts", new HashSet<>(Arrays.asList("Mass", "MA")));
 		samplesMap.put("California", new HashSet<>(Arrays.asList("Cali", "CA")));
 		slotResolver.setSampleSupplier(() -> samplesMap);
-		intent.addSlotResolver("placeName", slotResolver);
 
-		Grammar grammar = new Grammar();
-		grammar.addIntent(intent);
+		DslInterpreter dslInterpreter = new DslInterpreter();
+		dslInterpreter.addIntent(intent);
+		dslInterpreter.addSlotResolverForIntentAndSlot(intent.getName(), "placeName", slotResolver);
 
 		/** The exact value obviously matches **/
 		assertEquals("Massachusetts",
-				grammar.comprehend("I live in Massachusetts").getSlotValue("placeName").getResolved());
+				dslInterpreter.interpret("I live in Massachusetts").getSlotValue("placeName").getResolved());
 
 		/** Minor mis-spellings are okay **/
 		assertEquals("Massachusetts",
-				grammar.comprehend("I live in Maschusetts").getSlotValue("placeName").getResolved());
+				dslInterpreter.interpret("I live in Maschusetts").getSlotValue("placeName").getResolved());
 
 		/** Another synonym works too **/
-		assertEquals("Massachusetts", grammar.comprehend("I live in MA").getSlotValue("placeName").getResolved());
+		assertEquals("Massachusetts", dslInterpreter.interpret("I live in MA").getSlotValue("placeName").getResolved());
 
 		/** Another synonym works too **/
-		assertEquals("California", grammar.comprehend("I live in Calfornia").getSlotValue("placeName").getResolved());
+		assertEquals("California",
+				dslInterpreter.interpret("I live in Calfornia").getSlotValue("placeName").getResolved());
 
 		/**
 		 * This one can't be resolved because it exceeds the maxDistanceFraction set
 		 * above (0.2)
 		 **/
-		assertNull(grammar.comprehend("I live in Calif").getSlotValue("placeName").getResolved());
+		assertNull(dslInterpreter.interpret("I live in Calif").getSlotValue("placeName").getResolved());
 
 	}
 

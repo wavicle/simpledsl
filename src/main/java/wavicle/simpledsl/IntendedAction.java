@@ -1,8 +1,6 @@
 package wavicle.simpledsl;
 
-import java.util.Map;
+public interface IntendedAction<Context, Output> {
 
-public interface IntendedAction {
-
-	Object execute(ComprehensionResult result, Map<String, Object> context);
+	Output execute(Interpretation interpretation, Context context);
 }

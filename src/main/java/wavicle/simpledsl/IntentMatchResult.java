@@ -10,10 +10,6 @@ public class IntentMatchResult {
 		placeValuesByName.put(name, value);
 	}
 
-	public String getPlaceValue(String name) {
-		return placeValuesByName.get(name);
-	}
-
 	public Map<String, String> getPlaceValuesByName() {
 		return placeValuesByName;
 	}
