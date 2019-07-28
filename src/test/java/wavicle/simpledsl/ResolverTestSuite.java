@@ -20,6 +20,62 @@ import org.junit.Test;
 public class ResolverTestSuite {
 
 	/**
+	 * Verifies that if there is not {@link SlotResolver} is defined for the
+	 * (intent, slot) combination but one is defined at the intent level, it applies
+	 * to any slot by default.
+	 */
+	@Test
+	public void default_slot_resolver() {
+		MutableIntent intent = new MutableIntent();
+		intent.setName("testintent");
+		intent.addSampleUtterances("I live in ${placeName}");
+
+		LevenshteinDistanceBasedSlotResolver slotResolver = new LevenshteinDistanceBasedSlotResolver();
+		slotResolver.setMaxDistanceFraction(0.2);
+		Map<String, Set<String>> samplesMap = new HashMap<>();
+		samplesMap.put("Massachusetts", new HashSet<>(Arrays.asList("Mass", "MA")));
+		samplesMap.put("California", new HashSet<>(Arrays.asList("Cali", "CA")));
+		slotResolver.setSampleSupplier(() -> samplesMap);
+
+		DslInterpreter dslInterpreter = new DslInterpreter();
+		dslInterpreter.addIntent(intent);
+		dslInterpreter.setDefaultSlotResolver(slotResolver);
+
+		/** The exact value obviously matches **/
+		assertEquals("Massachusetts",
+				dslInterpreter.interpret("I live in Massachusetts").getSlotValue("placeName").getResolved());
+
+	}
+
+	/**
+	 * Verifies that if there is not {@link SlotResolver} is defined for the
+	 * (intent, slot) combination but one is defined at the intent level, it applies
+	 * to any slot by default.
+	 */
+	@Test
+	public void default_intent_level_slot_resolver() {
+		MutableIntent intent = new MutableIntent();
+		intent.setName("testintent");
+		intent.addSampleUtterances("I live in ${placeName}");
+
+		LevenshteinDistanceBasedSlotResolver slotResolver = new LevenshteinDistanceBasedSlotResolver();
+		slotResolver.setMaxDistanceFraction(0.2);
+		Map<String, Set<String>> samplesMap = new HashMap<>();
+		samplesMap.put("Massachusetts", new HashSet<>(Arrays.asList("Mass", "MA")));
+		samplesMap.put("California", new HashSet<>(Arrays.asList("Cali", "CA")));
+		slotResolver.setSampleSupplier(() -> samplesMap);
+
+		DslInterpreter dslInterpreter = new DslInterpreter();
+		dslInterpreter.addIntent(intent);
+		dslInterpreter.setDefaultSlotResolverForIntent(intent.getName(), slotResolver);
+
+		/** The exact value obviously matches **/
+		assertEquals("Massachusetts",
+				dslInterpreter.interpret("I live in Massachusetts").getSlotValue("placeName").getResolved());
+
+	}
+
+	/**
 	 * Verifies that the SlotResolver interface can be used in 'sanitizing' or
 	 * 'resolving' literal slot values. In this example, the literal slot value is
 	 * just made all upper-case, but more complex resolution can be programmed as
@@ -30,13 +86,13 @@ public class ResolverTestSuite {
 		/** Create a simple intent **/
 		MutableIntent intent = new MutableIntent();
 		intent.setName("myintent");
-		intent.addSampleUtterances("I have lived in (?<cityName>\\w+) since (?<year>\\w+)");
+		intent.addRawSampleUtterances("I have lived in (?<cityName>\\w+) since (?<year>\\w+)");
 
 		/** Create an interpreter just with one intent **/
 		DslInterpreter dslInterpreter = new DslInterpreter();
 		dslInterpreter.addIntent(intent);
 		/** Add a slot resolver that makes the city name uppercase **/
-		dslInterpreter.addSlotResolverForIntentAndSlot(intent.getName(), "cityName", new SlotResolver() {
+		dslInterpreter.setSlotResolverForIntentAndSlot(intent.getName(), "cityName", new SlotResolver() {
 
 			@Override
 			public String resolve(String literal) {
@@ -72,7 +128,7 @@ public class ResolverTestSuite {
 	public void levenshtein_distance_slot_resolver() {
 		MutableIntent intent = new MutableIntent();
 		intent.setName("testintent");
-		intent.addSampleUtterances("I live in (?<placeName>\\w+)");
+		intent.addRawSampleUtterances("I live in (?<placeName>\\w+)");
 
 		LevenshteinDistanceBasedSlotResolver slotResolver = new LevenshteinDistanceBasedSlotResolver();
 		slotResolver.setMaxDistanceFraction(0.2);
@@ -83,7 +139,7 @@ public class ResolverTestSuite {
 
 		DslInterpreter dslInterpreter = new DslInterpreter();
 		dslInterpreter.addIntent(intent);
-		dslInterpreter.addSlotResolverForIntentAndSlot(intent.getName(), "placeName", slotResolver);
+		dslInterpreter.setSlotResolverForIntentAndSlot(intent.getName(), "placeName", slotResolver);
 
 		/** The exact value obviously matches **/
 		assertEquals("Massachusetts",

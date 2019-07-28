@@ -38,12 +38,12 @@ public class DslExecutorTestSuite {
 		/** This intent 'sets' the value of a variable **/
 		MutableIntent setIntent = new MutableIntent();
 		setIntent.setName("set_varname_to_varvalue");
-		setIntent.addSampleUtterances("set (?<varname>\\w+) to '(?<varvalue>.+)'");
+		setIntent.addRawSampleUtterances("set (?<varname>\\w+) to '(?<varvalue>.+)'");
 
 		/** This intent 'gets' the value of a variable **/
 		MutableIntent getIntent = new MutableIntent();
 		getIntent.setName("get_varvalue_for_varname");
-		getIntent.addSampleUtterances("get (?<varname>\\w+)");
+		getIntent.addRawSampleUtterances("get (?<varname>\\w+)");
 
 		DslInterpreter dslInterpreter = new DslInterpreter();
 		dslInterpreter.addIntent(setIntent);

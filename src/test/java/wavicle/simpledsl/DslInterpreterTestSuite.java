@@ -25,13 +25,12 @@ public class DslInterpreterTestSuite {
 		/** Define an intent with a certain syntax governed by the regex **/
 		MutableIntent intent1 = new MutableIntent();
 		intent1.setName("my_pname_is_pval");
-		intent1.addSampleUtterances("My (?<propertyName>\\w+) is (?<propertyValue>\\w+)",
-				"(?<propertyValue>\\w+) is my (?<propertyName>\\w+)");
+		intent1.addSampleUtterances("My ${propertyName} is ${propertyValue}", "${propertyValue} is my ${propertyName}");
 
 		/** Another intent is defined with slightly different syntax **/
 		MutableIntent intent2 = new MutableIntent();
 		intent2.setName("the_pname_of_owner_is_pval");
-		intent2.addSampleUtterances("The (?<propertyName>\\w+) of (?<ownerName>\\w+) is (?<propertyValue>\\w+)");
+		intent2.addSampleUtterances("The ${propertyName} of ${ownerName} is ${propertyValue}");
 
 		/** Create a interpreter and add these two intents to it **/
 		DslInterpreter dslInterpreter = new DslInterpreter();

@@ -20,7 +20,7 @@ public class LevenshteinDistanceBasedSlotResolver implements SlotResolver {
 
 	private LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
 
-	private double maxDistanceFraction = 0.1;
+	private double maxDistanceFraction = 0.2;
 
 	private Supplier<Map<String, Set<String>>> sampleSupplier;
 
