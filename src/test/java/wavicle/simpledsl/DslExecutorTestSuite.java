@@ -56,7 +56,7 @@ public class DslExecutorTestSuite {
 
 			@Override
 			public String execute(Interpretation result, Map<String, Object> context) {
-				String varName = result.getSlotValue("varname").getResolved();
+				String varName = result.getSlotValue("varname");
 				String varValue = (String) context.get(varName);
 				return varValue;
 			}
@@ -65,8 +65,8 @@ public class DslExecutorTestSuite {
 
 			@Override
 			public String execute(Interpretation result, Map<String, Object> context) {
-				String varName = result.getSlotValue("varname").getResolved();
-				String varValue = result.getSlotValue("varvalue").getResolved();
+				String varName = result.getSlotValue("varname");
+				String varValue = result.getSlotValue("varvalue");
 				context.put(varName, varValue);
 				return null;
 			}
@@ -101,9 +101,7 @@ public class DslExecutorTestSuite {
 		 * If we still attempt to execute, an illegal argument exception will be thrown
 		 **/
 		try {
-			Interpretation interpretation = new Interpretation();
-			interpretation.setIntentName("myintent");
-			interpretation.setSlotValuesByName(Collections.singletonMap("name", new SlotValue("Alby", "Albert")));
+			Interpretation interpretation = new Interpretation("myintent", Collections.singletonMap("name", "Albert"));
 			executor.execute(interpretation);
 			fail("This line should not be executed. Instead, an exception should be thrown.");
 		} catch (Exception e) {

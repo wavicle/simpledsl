@@ -1,26 +1,24 @@
 package wavicle.simpledsl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Interpretation {
-	private String intentName;
+	private final String intentName;
 
-	private Map<String, SlotValue> slotValuesByName = new HashMap<>();
+	private final Map<String, String> slotValuesByName;
+
+	public Interpretation(String intentName, Map<String, String> slotValuesByName) {
+		super();
+		this.intentName = intentName;
+		this.slotValuesByName = slotValuesByName;
+	}
 
 	public String getIntentName() {
 		return intentName;
 	}
 
-	public void setIntentName(String intentName) {
-		this.intentName = intentName;
-	}
-
-	public SlotValue getSlotValue(String name) {
+	public String getSlotValue(String name) {
 		return slotValuesByName.get(name);
 	}
 
-	public void setSlotValuesByName(Map<String, SlotValue> slotValuesByName) {
-		this.slotValuesByName = slotValuesByName;
-	}
 }

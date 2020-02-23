@@ -16,19 +16,21 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
  * @author Shashank Araokar
  *
  */
-public class LevenshteinDistanceBasedSlotResolver implements SlotResolver {
+public class LevenshteinSlotResolver implements SlotResolver {
 
-	private LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
+	private final LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
 
-	private double maxDistanceFraction = 0.2;
+	private final double maxDistanceFraction;
 
-	private Supplier<Map<String, Set<String>>> sampleSupplier;
+	private final Supplier<Map<String, Set<String>>> sampleSupplier;
 
-	public void setMaxDistanceFraction(double ceiling) {
-		this.maxDistanceFraction = ceiling;
+	public LevenshteinSlotResolver(Supplier<Map<String, Set<String>>> sampleSupplier) {
+		this(0.2, sampleSupplier);
 	}
 
-	public void setSampleSupplier(Supplier<Map<String, Set<String>>> sampleSupplier) {
+	public LevenshteinSlotResolver(double maxDistanceFraction, Supplier<Map<String, Set<String>>> sampleSupplier) {
+		super();
+		this.maxDistanceFraction = maxDistanceFraction;
 		this.sampleSupplier = sampleSupplier;
 	}
 

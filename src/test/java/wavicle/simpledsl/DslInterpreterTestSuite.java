@@ -44,20 +44,20 @@ public class DslInterpreterTestSuite {
 		/** This should match intent 2 (note that extra spaces are ignored) **/
 		result = dslInterpreter.interpret("  The capital    of Canada  is Ottawa ");
 		assertEquals(intent2.getName(), result.getIntentName());
-		assertEquals("capital", result.getSlotValue("propertyName").getLiteral());
-		assertEquals("Ottawa", result.getSlotValue("propertyValue").getLiteral());
+		assertEquals("capital", result.getSlotValue("propertyName"));
+		assertEquals("Ottawa", result.getSlotValue("propertyValue"));
 
 		/** And this should match intent 1 (note that it is also case-insensitive!) **/
 		result = dslInterpreter.interpret("mY NaME iS Shashank");
 		assertEquals(intent1.getName(), result.getIntentName());
-		assertEquals("NaME", result.getSlotValue("propertyName").getLiteral());
-		assertEquals("Shashank", result.getSlotValue("propertyValue").getLiteral());
+		assertEquals("NaME", result.getSlotValue("propertyName"));
+		assertEquals("Shashank", result.getSlotValue("propertyValue"));
 
 		/** There is more. This is intent 1 with a different style **/
 		result = dslInterpreter.interpret("Java is my language");
 		assertEquals(intent1.getName(), result.getIntentName());
-		assertEquals("language", result.getSlotValue("propertyName").getLiteral());
-		assertEquals("Java", result.getSlotValue("propertyValue").getLiteral());
+		assertEquals("language", result.getSlotValue("propertyName"));
+		assertEquals("Java", result.getSlotValue("propertyValue"));
 	}
 
 }
