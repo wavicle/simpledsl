@@ -30,6 +30,7 @@ public class LevenshteinSlotResolverTest {
 		});
 
 		assertEquals("California", resolver.resolve("Calfonia"));
+		assertEquals("California", resolver.resolve("calFonia"));
 		assertEquals(null, resolver.resolve("Cafonia"));
 	}
 }
