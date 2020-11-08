@@ -37,12 +37,13 @@ public class LevenshteinSlotResolver implements SlotResolver {
 	@Override
 	public String resolve(String literal) {
 		Validate.notBlank(literal, "The literal to be resolved must not be blank.");
+		String saneLiteral = literal.toLowerCase();
 		Map<String, Set<String>> samplesByObjectName = sampleSupplier.get();
 		for (Map.Entry<String, Set<String>> entry : samplesByObjectName.entrySet()) {
 			String exactValue = entry.getKey();
 			Set<String> samples = entry.getValue();
 			for (String sample : SetUtils.union(samples, Collections.singleton(exactValue))) {
-				int distance = levenshteinDistance.apply(literal, sample);
+				int distance = levenshteinDistance.apply(saneLiteral, sample.toLowerCase());
 				int threshold = (int) (sample.length() * maxDistanceFraction);
 				if (distance <= threshold) {
 					return exactValue;
