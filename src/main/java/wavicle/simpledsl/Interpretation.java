@@ -1,6 +1,7 @@
 package wavicle.simpledsl;
 
 import java.util.Map;
+import java.util.Optional;
 
 public class Interpretation {
 	private final String intentName;
@@ -17,8 +18,8 @@ public class Interpretation {
 		return intentName;
 	}
 
-	public String getSlotValue(String name) {
-		return slotValuesByName.get(name);
+	public Optional<String> getSlotValue(String name) {
+		return Optional.ofNullable(slotValuesByName.get(name));
 	}
 
 }
