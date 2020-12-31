@@ -2,6 +2,7 @@ package wavicle.simpledsl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -21,17 +22,17 @@ public class DslInterpreter {
 		intentsByName.put(intent.getName(), intent);
 	}
 
-	public Interpretation interpret(String inputSentence) {
+	public Optional<Interpretation> interpret(String inputSentence) {
 		for (Intent intent : intentsByName.values()) {
 			IntentMatchResult matchResult = intent.match(StringUtils.trimToEmpty(inputSentence));
 			if (matchResult != null) {
 				Map<String, String> placeValuesByName = matchResult.getPlaceValuesByName();
 				Map<String, String> slotValuesByName = buildSlotValuesByName(intent, placeValuesByName);
 				Interpretation result = new Interpretation(intent.getName(), slotValuesByName);
-				return result;
+				return Optional.of(result);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	private Map<String, String> buildSlotValuesByName(Intent intent, Map<String, String> placeValuesByName) {
