@@ -1,12 +1,8 @@
 package wavicle.simpledsl;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
 import java.util.function.BiFunction;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,33 +18,50 @@ public class LanguageUtils {
 
 	private static final double DEFAULT_THRESHOLD = 0.2;
 
-	public static Optional<String> resolve(String literal, Map<String, Set<String>> samplesByExact) {
-		return resolve(literal, samplesByExact, DEFAULT_THRESHOLD, LEV_DISTANCE_FUNCTION);
+	public static class IdAndNames {
+		private String id;
+		private List<String> names;
+
+		public IdAndNames(String id, List<String> names) {
+			super();
+			this.id = id;
+			this.names = names;
+		}
+
+		public String getId() {
+			return id;
+		}
+
+		public List<String> getNames() {
+			return names;
+		}
 	}
 
-	public static Optional<String> resolve(String literal, Map<String, Set<String>> samplesByExact, double threshold) {
-		return resolve(literal, samplesByExact, threshold, LEV_DISTANCE_FUNCTION);
+	public static List<Pair<IdAndNames, Double>> resolve(String literal, Collection<IdAndNames> idAndNamesCollection) {
+		return resolve(literal, idAndNamesCollection, DEFAULT_THRESHOLD, LEV_DISTANCE_FUNCTION);
 	}
 
-	public static Optional<String> resolve(String literal, Map<String, Set<String>> samplesByExact, double threshold,
-			BiFunction<String, String, Integer> distanceFunction) {
-		List<Pair<String, Double>> matches = new ArrayList<>();
-		for (Entry<String, Set<String>> entry : samplesByExact.entrySet()) {
-			String exactValue = entry.getKey();
-			Set<String> samples = entry.getValue();
+	public static List<Pair<IdAndNames, Double>> resolve(String literal, Collection<IdAndNames> idAndNamesCollection,
+			double threshold) {
+		return resolve(literal, idAndNamesCollection, threshold, LEV_DISTANCE_FUNCTION);
+	}
+
+	public static List<Pair<IdAndNames, Double>> resolve(String literal, Collection<IdAndNames> idAndNamesCollection,
+			double threshold, BiFunction<String, String, Integer> distanceFunction) {
+		List<Pair<IdAndNames, Double>> matches = new ArrayList<>();
+		for (IdAndNames entry : idAndNamesCollection) {
+			List<String> samples = entry.names;
 			for (String sample : samples) {
 				double distance = applyDistance(distanceFunction, literal, sample);
 				double distFraction = distance / sample.length();
 				if (distFraction <= threshold) {
-					matches.add(Pair.of(exactValue, distance));
+					matches.add(Pair.of(entry, distance));
+					break;
 				}
 			}
 		}
-		if (matches.isEmpty()) {
-			return Optional.empty();
-		} else {
-			return Optional.of(Collections.min(matches, (m1, m2) -> m1.getRight().compareTo(m2.getRight())).getLeft());
-		}
+		matches.sort((m1, m2) -> m1.getRight().compareTo(m2.getRight()));
+		return matches;
 	}
 
 	private static double applyDistance(BiFunction<String, String, Integer> distanceFunction, String s1, String s2) {
